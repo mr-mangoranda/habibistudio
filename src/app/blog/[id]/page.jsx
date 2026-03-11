@@ -1,50 +1,57 @@
 import React from 'react'
 import styles from './page.module.css'
 import Image from 'next/image'
+import { notFound } from 'next/navigation';
 
-const BlogPost = () => {
+async function getData(id) {
+  const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    return notFound()
+  }
+
+  return res.json();
+}
+
+const BlogPost = async ({ params }) => {
+  const data = await getData(params.id);
   return (
     <div className={styles.container}>
       <div className={styles.top}>
         <div className={styles.info}>
-          <h1 className={styles.title}>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illo, tempore.
-          </h1>
+          <h1 className={styles.title}>{data.title}</h1>
           <p className={styles.desc}>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nulla officia expedita, vel sint doloremque unde pariatur nemo mollitia repudiandae reprehenderit repellendus, quo, dignissimos inventore asperiores corrupti facilis itaque! Perferendis sit nobis suscipit reprehenderit ea, architecto alias ex exercitationem, laborum tempore velit facere odio. Velit totam eius, est placeat quaerat blanditiis?
+            {data.desc}
           </p>
-
           <div className={styles.author}>
-            <Image 
-              src=""
-              alt=''
+            <Image
+              src={data.img}
+              alt=""
               width={40}
               height={40}
               className={styles.avatar}
             />
-            <span className={styles.username}>John Doe</span>
+            <span className={styles.username}>{data.username}</span>
           </div>
         </div>
         <div className={styles.imageContainer}>
-          <Image 
-            src=""
-            alt=''
+          <Image
+            src={data.img}
+            alt=""
             fill={true}
             className={styles.image}
           />
         </div>
       </div>
       <div className={styles.content}>
-        <div className={styles.text}>
-          <p className={styles.text}>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, eum at, obcaecati quaerat reiciendis minus adipisci sapiente, in est corporis odio. Inventore voluptatem, hic quibusdam cupiditate unde consequatur ex earum dolore dicta voluptate est aut at dignissimos praesentium recusandae. Nobis iusto ratione minus veniam tempora ea blanditiis doloremque quo. Ratione.
-            
-          </p>
-        </div>
+        <p className={styles.text}>
+         {data.content}
+        </p>
       </div>
     </div>
-    
-  )
-}
+  );
+};
 
-export default BlogPost
+export default BlogPost;
